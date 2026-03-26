@@ -1,0 +1,38 @@
+services:
+  mongo:
+    image: mongo:6
+    container_name: mongodb
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo_data:/data/db
+    restart: unless-stopped
+
+  backend:
+    build: ./backend
+    container_name: fastapi_backend
+    ports:
+      - "8000:8000"
+    depends_on:
+      - mongo
+    env_file:
+      - ./backend/.env
+    restart: unless-stopped
+    environment:
+      - MONGO_URL=mongodb://mongo:27017
+
+  frontend:
+    build:
+      context: ./frontend
+      args:
+        - EXPO_PUBLIC_BACKEND_URL=http://localhost:8000
+        - EXPO_PUBLIC_GOOGLE_CLIENT_ID=${EXPO_PUBLIC_GOOGLE_CLIENT_ID}
+    container_name: expo_frontend
+    ports:
+      - "8081:8081"
+    depends_on:
+      - backend
+    restart: unless-stopped
+
+volumes:
+  mongo_data:
