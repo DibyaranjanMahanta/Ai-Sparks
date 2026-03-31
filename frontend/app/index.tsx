@@ -92,7 +92,6 @@ export default function Index() {
     setAuthLoading(false);
   };
 
-  // ✅ FIXED: Real Google OAuth2 — no more Emergent
   const handleGoogleLogin = () => {
     if (Platform.OS === 'web') {
       if (!GOOGLE_CLIENT_ID) {
